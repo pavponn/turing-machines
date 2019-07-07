@@ -1,0 +1,113 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S 1 -> S' 1 <
+S 0 -> S' 0 <
+S' e -> DELIM - <
+
+DELIM e -> TOLAST 0 >
+
+TOLAST - -> TOLAST - >
+TOLAST 0 -> TOLAST 0 >
+TOLAST 1 -> TOLAST 1 >
+TOLAST 2 -> TOLAST 0 >
+TOLAST 3 -> TOLAST 1 >
+TOLAST * -> TOLAST * >
+TOLAST z -> TOLAST z >
+TOLAST o -> TOLAST o >
+
+TOLAST e -> LAST e <
+
+LAST 0 -> GOSHIFT e <
+LAST 1 -> GOSUM e <
+LAST * -> CLEAN e <
+
+GOSHIFT 1 -> GOSHIFT 1 <
+GOSHIFT 0 -> GOSHIFT 0 <
+GOSHIFT * -> GOSHIFT * <
+GOSHIFT - -> SHIFT - <
+
+SHIFT z -> SHIFT z <
+SHIFT o -> SHIFT o <
+SHIFT 1 -> TOLAST o >
+SHIFT 0 -> TOLAST z >
+SHIFT e -> TOLAST z >
+
+GOSUM 0 -> GOSUM 0 <
+GOSUM 1 -> GOSUM 1 <
+GOSUM * -> SUM * <
+
+SUM 0 -> GOADD0 2 <
+SUM 1 -> GOADD1 3 <
+SUM - -> DSHIFT - <
+
+GOADD0 0 -> GOADD0 0 <
+GOADD0 1 -> GOADD0 1 <
+GOADD0 - -> ADD0 - <
+
+ADD0 2 -> ADD0 2 <
+ADD0 3 -> ADD0 3 <
+ADD0 z -> ADD0 z <
+ADD0 o -> ADD0 o <
+ADD0 0 -> RETSUM 2 >
+ADD0 1 -> RETSUM 3 >
+ADD0 e -> RETSUM 2 >
+
+RETSUM 0 -> RETSUM 0 >
+RETSUM 1 -> RETSUM 1 >
+RETSUM 2 -> RETSUM 2 >
+RETSUM 3 -> RETSUM 3 >
+RETSUM o -> RETSUM o >
+RETSUM z -> RETSUM z >
+RETSUM - -> TOSUM - >
+
+TOSUM 0 -> TOSUM 0 >
+TOSUM 1 -> TOSUM 1 >
+TOSUM 2 -> SUM 2 <
+TOSUM 3 -> SUM 3 <
+
+GOADD1 0 -> GOADD1 0 <
+GOADD1 1 -> GOADD1 1 <
+GOADD1 - -> ADD1 - <
+
+ADD1 z -> ADD1 z <
+ADD1 o -> ADD1 o <
+ADD1 2 -> ADD1 2 <
+ADD1 3 -> ADD1 3 <
+ADD1 0 -> RETSUM 3 >
+ADD1 e -> RETSUM 3 >
+ADD1 1 -> CARRY 2 <
+
+
+CARRY e -> RETSUM 1 >
+CARRY 0 -> RETSUM 1 >
+CARRY 1 -> CARRY 0 <
+
+DSHIFT o -> DSHIFT o <
+DSHIFT z -> DSHIFT z <
+DSHIFT 2 -> FRESH z <
+DSHIFT 3 -> FRESH o <
+
+FRESH 1 -> FRESH 1 <
+FRESH 0 -> FRESH 0 <
+FRESH 2 -> FRESH 0 <
+FRESH 3 -> FRESH 1 <
+FRESH e -> TOLAST e >
+
+CLEAN 1 -> CLEAN e <
+CLEAN 0 -> CLEAN e <
+CLEAN 2 -> CLEAN e <
+CLEAN 3 -> CLEAN e <
+CLEAN - -> SET e <
+
+
+SET o -> SET 1 <
+SET z -> SET 0 <
+SET 1 -> SET 1 <
+SET 0 -> SET 0 <
+SET 2 -> SET 0 <
+SET 3 -> SET 1 <
+
+SET e -> AC e >

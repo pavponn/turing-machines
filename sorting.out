@@ -1,0 +1,274 @@
+3
+
+S 0 _ _ -> COPYFST 0 ^ _ ^ _ ^
+S 1 _ _ -> COPYFST 1 ^ _ ^ _ ^
+
+COPYFST * _ _ -> SKIPFST * > _ ^ _ ^
+COPYFST 0 _ _ -> COPYFST 0 > 0 > _ ^
+COPYFST 1 _ _ -> COPYFST 1 > 1 > _ ^
+COPYFST | _ _ -> TRYSND | > < > _ ^
+COPYFST _ _ _ -> TRYSND | > < > _ ^
+SKIPFST *  _ _ -> SKIPFST * > _ ^ _ ^
+SKIPFST | _ _ -> COPYFST | > _ ^ _ ^
+
+
+COPYSND 0 _ _ -> COPYSND 0 > 0 > _ ^
+COPYSND 1 _ _ -> COPYSND 1 > 1 > _ ^
+COPYSND * _ _ -> SKIPSND * > _ ^ _ ^
+COPYSND _ _ _ -> LASTNUMBERCOPY _ ^ _ < _ ^
+SKIPSND * _ _ -> SKIPSND * > _ ^ _ ^
+SKIPSND | _ _ -> TRYSND | > _ ^ _ ^
+
+TRYSND _ _ _ -> LASTNUMBERCOPY _ ^ _ < _ ^
+TRYSND 0 _ _ -> COPYSND 0 ^ _ ^ _ ^
+TRYSND 1 _ _ -> COPYSND 1 ^ _ ^ _ ^
+TRYSND * _ _ -> SKIPSND * ^ _ ^ _ ^
+
+COPYSND | _ _ -> STARTCOMPARE | ^ _ < _ ^
+COPYSND _ _ _ -> STARTCOMPARE | ^ _ < _ ^
+
+STARTCOMPARE | 0 _ -> STARTCOMPARE | ^ 0 < _ ^
+STARTCOMPARE | 1 _ -> STARTCOMPARE | ^ 1 < _ ^
+STARTCOMPARE | < _ -> STARTCOMPARE | ^ < < _ ^
+STARTCOMPARE | < _ -> STARTCOMPARE | ^ < < _ ^
+STARTCOMPARE | _ _ -> LESS | ^ _ > _ ^
+
+
+LESS | 0 _ -> GO | ^ 2 > _ ^
+LESS | 1 _ -> GO | ^ 3 > _ ^
+LESS | < _ -> CHECKLENGTH | ^ < > _ ^
+
+
+CHECKLENGTH | 2 _ -> TOBEGIN | ^ 2 < _ ^
+CHECKLENGTH | 3 _ -> TOBEGIN | ^ 3 < _ ^
+CHECKLENGTH | 1 _ -> FSTLESS | ^ 1 ^ _ ^
+CHECKLENGTH | 0 _ -> FSTLESS | ^ 0 ^ _ ^
+
+GO | 0 _ -> GO | ^ 0 > _ ^
+GO | 1 _ -> GO | ^ 1 > _ ^
+GO | < _ -> GO | ^ < > _ ^
+GO | 2 _ -> CHANGE | ^ 2 < _ ^
+GO | 3 _ -> CHANGE | ^ 3 < _ ^
+GO | _ _ -> CHANGE | ^ _ < _ ^
+
+CHANGE | 0 _ -> BACK | ^ 2 < _ ^
+CHANGE | 1 _ -> BACK | ^ 3 < _ ^
+CHANGE | < _ -> SNDLESS | ^ < ^ _ ^
+
+BACK | 0 _ -> BACK | ^ 0 < _ ^
+BACK | 1 _ -> BACK | ^ 1 < _ ^
+BACK | < _ -> BACK | ^ < < _ ^
+BACK | 2 _ -> LESS | ^ 2 > _ ^
+BACK | 3 _ -> LESS | ^ 3 > _ ^
+BACK | _ _ -> LESS | ^ _ > _ ^
+
+TOBEGIN | 2 _ -> TOBEGIN | ^ 2 < _ ^
+TOBEGIN | 3 _ -> TOBEGIN | ^ 3 < _ ^
+TOBEGIN | _ _ -> COMPARE | ^ _ > _ ^
+TOBEGIN | < _ -> TOBEGIN | ^ < < _ ^
+TOBEGIN | 2. _ -> TOBEGIN | ^ 2. < _ ^
+TOBEGIN | 3. _ -> TOBEGIN | ^ 3. < _ ^
+TOBEGIN | 2' _ -> COMPARE | ^ 2' > _ ^
+TOBEGIN | 3' _ -> COMPARE | ^ 3' > _ ^
+
+COMPARE | 2 _ -> TOEND2 | ^ 2' > _ ^
+COMPARE | 3 _ -> TOEND3 | ^ 3' > _ ^
+COMPARE | < _ -> SNDLESS | ^ < ^ _ ^
+
+TOEND2 | 2 _ -> TOEND2 | ^ 2 > _ ^
+TOEND2 | 3 _ -> TOEND2 | ^ 3 > _ ^
+TOEND2 | < _ -> TOEND2 | ^ < > _ ^
+TOEND2 | _ _ -> COMPARE2 | ^ _ < _ ^
+TOEND2 | 3. _ -> TOEND2 | ^ 3. > _ ^
+TOEND2 | 2. _ -> TOEND2 | ^ 2. > _ ^
+
+
+COMPARE2 | 2 _ -> COMPARE2 | ^ 2 < _ ^
+COMPARE2 | 3 _ -> COMPARE2 | ^ 3 < _ ^
+COMPARE2 | < _ -> CHECK2 | ^ < > _ ^
+COMPARE2 | 3. _ -> CHECK2 | ^ 3. > _ ^
+COMPARE2 | 2. _ -> CHECK2 | ^ 2. > _ ^
+
+CHECK2 | 2 _ -> TOBEGIN | ^ 2. < _ ^
+CHECK2 | 3 _ -> FSTLESS | ^ 3 ^ _ ^
+
+TOEND3 | 2 _ -> TOEND3 | ^ 2 > _ ^
+TOEND3 | 3 _ -> TOEND3 | ^ 3 > _ ^
+TOEND3 | < _ -> TOEND3 | ^ < > _ ^
+TOEND3 | _ _ -> COMPARE3 | ^ _ < _ ^
+TOEND3 | 3. _ -> TOEND3 | ^ 3. > _ ^
+TOEND3 | 2. _ -> TOEND3 | ^ 2. > _ ^
+
+COMPARE3 | 2 _ -> COMPARE3 | ^ 2 < _ ^
+COMPARE3 | 3 _ -> COMPARE3 | ^ 3 < _ ^
+COMPARE3 | < _ -> CHECK3 | ^ < > _ ^
+COMPARE3 | 3. _ -> CHECK3 | ^ 3. > _ ^
+COMPARE3 | 2. _ -> CHECK3 | ^ 2. > _ ^
+
+CHECK3 | 2 _ -> SNDLESS | ^ 2 ^ _ ^
+CHECK3 | 3 _ -> TOBEGIN | ^ 3. < _ ^
+
+FSTLESS | 3 _ -> GOTOEND | ^ 3 > _ ^
+FSTLESS | 2 _ -> GOTOEND | ^ 2 > _ ^
+FSTLESS | 1 _ -> GOTOEND | ^ 1 > _ ^
+FSTLESS | 0 _ -> GOTOEND | ^ 0 > _ ^
+FSTLESS | 1 _ -> GOTOEND | ^ 1 > _ ^
+FSTLESS | < _ -> GOTOEND | ^ < > _ ^
+
+GOTOEND | 3 _ -> GOTOEND | ^ 3 > _ ^
+GOTOEND | 2 _ -> GOTOEND | ^ 2 > _ ^
+GOTOEND | 1 _ -> GOTOEND | ^ 1 > _ ^
+GOTOEND | 0 _ -> GOTOEND | ^ 0 > _ ^
+GOTOEND | 3. _ -> GOTOEND | ^ 3. > _ ^
+GOTOEND | 2. _ -> GOTOEND | ^ 2. > _ ^
+GOTOEND | 3' _ -> GOTOEND | ^ 3' > _ ^
+GOTOEND | 2' _ -> GOTOEND | ^ 2' > _ ^
+GOTOEND | < _ -> GOTOEND | ^ < > _ ^
+GOTOEND | _ _ -> CLEARSND | ^ _ < _ ^
+
+CLEARSND | 3 _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 2 _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 1 _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 0 _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 3. _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 2. _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 3' _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | 2' _ -> CLEARSND | ^ _ < _ ^
+CLEARSND | < _ -> REFORMATFST | ^ _ < _ ^
+
+REFORMATFST | 3 _ -> REFORMATFST | ^ 1 < _ ^
+REFORMATFST | 2 _ -> REFORMATFST | ^ 0 < _ ^
+REFORMATFST | 1 _ -> REFORMATFST | ^ 1 < _ ^
+REFORMATFST | 0 _ -> REFORMATFST | ^ 0 < _ ^
+REFORMATFST | 3. _ -> REFORMATFST | ^ 1 < _ ^
+REFORMATFST | 2. _ -> REFORMATFST | ^ 0 < _ ^
+REFORMATFST | 3' _ -> REFORMATFST | ^ 1 < _ ^
+REFORMATFST | 2' _ -> REFORMATFST | ^ 0 < _ ^
+REFORMATFST | _ _ -> TOENDOFMIN | ^ _ > _ ^
+
+TOENDOFMIN | 0 _ -> TOENDOFMIN | ^ 0 > _ ^
+TOENDOFMIN | 1 _ -> TOENDOFMIN | ^ 1 > _ ^
+TOENDOFMIN | _ _ -> TRYCOMPARE | > _ ^ _ ^
+
+
+SNDLESS | < _ -> GOTOBEGIN | ^ < < _ ^
+SNDLESS | 0 _ -> GOTOBEGIN | ^ 0 < _ ^
+SNDLESS | 1 _ -> GOTOBEGIN | ^ 1 < _ ^
+SNDLESS | 2 _ -> GOTOBEGIN | ^ 2 < _ ^
+SNDLESS | 3 _ -> GOTOBEGIN | ^ 3 < _ ^
+
+GOTOBEGIN | 3 _ -> GOTOBEGIN | ^ 3 < _ ^
+GOTOBEGIN | 2 _ -> GOTOBEGIN | ^ 2 < _ ^
+GOTOBEGIN | 1 _ -> GOTOBEGIN | ^ 1 < _ ^
+GOTOBEGIN | 0 _ -> GOTOBEGIN | ^ 0 < _ ^
+GOTOBEGIN | 3. _ -> GOTOBEGIN | ^ 3. < _ ^
+GOTOBEGIN | 2. _ -> GOTOBEGIN | ^ 2. < _ ^
+GOTOBEGIN | 3' _ -> GOTOBEGIN | ^ 3' < _ ^
+GOTOBEGIN | 2' _ -> GOTOBEGIN | ^ 2' < _ ^
+GOTOBEGIN | < _ -> GOTOBEGIN | ^ < < _ ^
+GOTOBEGIN | _ _ -> CLEARFST | ^ _ > _ ^
+
+CLEARFST | 3 _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 2 _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 1 _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 0 _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 3. _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 2. _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 3' _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | 2' _ -> CLEARFST | ^ _ > _ ^
+CLEARFST | < _ -> REFORMATSND | ^ _ > _ ^
+
+REFORMATSND | 3 _ -> REFORMATSND | ^ 1 > _ ^
+REFORMATSND | 2 _ -> REFORMATSND | ^ 0 > _ ^
+REFORMATSND | 1 _ -> REFORMATSND | ^ 1 > _ ^
+REFORMATSND | 0 _ -> REFORMATSND | ^ 0 > _ ^
+REFORMATSND | 3. _ -> REFORMATSND | ^ 1 > _ ^
+REFORMATSND | 2. _ -> REFORMATSND | ^ 0 > _ ^
+REFORMATSND | 3' _ -> REFORMATSND | ^ 1 > _ ^
+REFORMATSND | 2' _ -> REFORMATSND | ^ 0 > _ ^
+REFORMATSND | _ _ -> TRYCOMPARE | > _ ^ _ ^
+
+
+TRYCOMPARE _ _ _ -> STARTCROSSMIN _ ^ _ < _ ^
+TRYCOMPARE 0 _ _ -> COPYSND 0 ^ < > _ ^
+TRYCOMPARE 1 _ _ -> COPYSND 1 ^ < > _ ^
+TRYCOMPARE * _ _ -> TRYCOMPARE * > _ ^ _ ^
+TRYCOMPARE | _ _ -> TRYCOMPARE | > _ ^ _ ^
+
+STARTCROSSMIN _ 0 _ -> STARTCROSSMIN _ ^ 0 <  _ ^
+STARTCROSSMIN _ 1 _ -> STARTCROSSMIN _ ^ 1 <  _ ^
+STARTCROSSMIN _ _ _ -> MAKEREADYTAPE _ < _ ^ _ ^
+
+MAKEREADYTAPE | _ _ -> MAKEREADYTAPE | < _ ^ _ ^
+MAKEREADYTAPE 0 _ _ -> MAKEREADYTAPE 0 < _ ^ _ ^
+MAKEREADYTAPE 1 _ _ -> MAKEREADYTAPE 1 < _ ^ _ ^
+MAKEREADYTAPE * _ _ -> MAKEREADYTAPE * < _ ^ _ ^
+MAKEREADYTAPE _ _ _ -> CHECKIFEQUAL _ > _ > _ ^
+
+CHECKIFEQUAL 0 0 _ -> CHECKIFEQUAL 0 > 0 > _ ^
+CHECKIFEQUAL 1 1 _ -> CHECKIFEQUAL 1 > 1 > _ ^
+CHECKIFEQUAL | _ _ -> CROSS | < _ < _ ^
+
+CHECKIFEQUAL * 1 _ -> NEXTNUM * > 1 ^ _ ^
+CHECKIFEQUAL * 0 _ -> NEXTNUM * > 0 ^ _ ^
+CHECKIFEQUAL 0 1 _ -> NEXTNUM 0 > 1 ^ _ ^
+CHECKIFEQUAL 1 0 _ -> NEXTNUM 1 > 0 ^ _ ^
+CHECKIFEQUAL | 1 _ -> TOMINBEGIN | ^ 1 ^ _ ^
+CHECKIFEQUAL | 0 _ -> TOMINBEGIN | ^ 0 ^ _ ^
+CHECKIFEQUAL 0 _ _ -> NEXTNUM 0 > _  < _ ^
+CHECKIFEQUAL 1 _ _ -> NEXTNUM 1 > _  < _ ^
+
+NEXTNUM * 0 _ -> NEXTNUM * > 0 ^ _ ^
+NEXTNUM * 1 _ -> NEXTNUM * > 1 ^ _ ^
+NEXTNUM 0 0 _ -> NEXTNUM 0 > 0 ^ _ ^
+NEXTNUM 0 1 _ -> NEXTNUM 0 > 1 ^ _ ^
+NEXTNUM 1 0 _ -> NEXTNUM 1 > 0 ^ _ ^
+NEXTNUM 1 1 _ -> NEXTNUM 1 > 1 ^ _ ^
+NEXTNUM | 0 _ -> TOMINBEGIN | ^ 0 < _ ^
+NEXTNUM | 1 _ -> TOMINBEGIN | ^ 1 < _ ^
+
+TOMINBEGIN | 0 _ -> TOMINBEGIN | ^ 0 < _ ^
+TOMINBEGIN | 1 _ -> TOMINBEGIN | ^ 1 < _ ^
+TOMINBEGIN | _ _ -> CHECKIFEQUAL | > _ > _ ^
+
+
+CROSS 0 0 _ -> CROSS * < 0 < _ ^
+CROSS 1 1 _ -> CROSS * < 1 < _ ^
+CROSS | _ _ -> COPYMIN | ^ _ > _ ^
+CROSS _ _ _ -> COPYMIN _ ^ _ > _ ^
+
+COPYMIN | 0 _ -> COPYMIN | ^ _ > 0 >
+COPYMIN | 1 _ -> COPYMIN | ^ _ > 1 >
+COPYMIN _ 0 _ -> COPYMIN _ ^ _ > 0 >
+COPYMIN _ 1 _ -> COPYMIN _ ^ _ > 1 >
+COPYMIN | _ _ -> TOTAPEBEGIN | ^ _ ^ | >
+COPYMIN _ _ _ -> COPYFST _ > _ ^ | >
+
+TOTAPEBEGIN * _ _ -> TOTAPEBEGIN * < _ ^ _ ^
+TOTAPEBEGIN | _ _ -> TOTAPEBEGIN | < _ ^ _ ^
+TOTAPEBEGIN 0 _ _ -> TOTAPEBEGIN 0 < _ ^ _ ^
+TOTAPEBEGIN 1 _ _ -> TOTAPEBEGIN 1 < _ ^ _ ^
+TOTAPEBEGIN _ _ _ -> COPYFST _ > _ ^ _ ^
+
+LASTNUMBERCOPY _ < _ -> LASTNUMBERCOPY _ ^ _ < _ ^
+LASTNUMBERCOPY _ 0 _ -> LASTNUMBERCOPY _ ^ 0 < _ ^
+LASTNUMBERCOPY _ 1 _ -> LASTNUMBERCOPY _ ^ 1 < _ ^
+LASTNUMBERCOPY _ _ _ -> REALLASTNUMBERCOPY _ ^ _ > _ ^
+REALLASTNUMBERCOPY _ 0 _ -> REALLASTNUMBERCOPY _ ^ _ > 0 >
+REALLASTNUMBERCOPY _ 1 _ -> REALLASTNUMBERCOPY _ ^ _ > 1 >
+
+REALLASTNUMBERCOPY _ _ _ -> CLEARMAINTAPE _ < _ ^ _ ^
+CLEARMAINTAPE 0 _ _ -> CLEARMAINTAPE _ < _ ^ _ ^
+CLEARMAINTAPE 1 _ _ -> CLEARMAINTAPE _ < _ ^ _ ^
+CLEARMAINTAPE * _ _ -> CLEARMAINTAPE _ < _ ^ _ ^
+CLEARMAINTAPE | _ _ -> CLEARMAINTAPE _ < _ ^ _ ^
+CLEARMAINTAPE _ _ _ -> COPYRESULT _ ^ _ ^ _ <
+
+COPYRESULT _ _ 0 -> COPYRESULT 0 < _ ^ _ <
+COPYRESULT _ _ 1 -> COPYRESULT 1 < _ ^ _ <
+COPYRESULT _ _ | -> COPYRESULT | < _ ^ _ <
+COPYRESULT _ _ _ -> AC _ > _ ^ _ ^
+
+
+
+

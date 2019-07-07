@@ -1,0 +1,40 @@
+2
+
+RES _ 2 -> RES _ ^ _ <
+RES _ 3 -> AC 1 ^ _ <
+RES _ o -> RES _ ^ _ <
+RES _ _ -> AC 0 ^ _ <
+
+S _ _ -> RES _ ^ _ <
+
+S ( _ -> S _ > ( >
+S ) _ -> BACK _ ^ _ <
+
+S 1 _ -> S _ > 3 >
+S 0 _ -> S _ > 2 >
+
+S o _ -> S _ > o >
+S a _ -> A _ > _ <
+
+
+A ( 2 -> A2 ( ^ 2 >
+A ( 3 -> A2 ( ^ 3 >
+
+A 0 2 -> S _ > 2 >
+A 0 3 -> S _ > 2 >
+A 1 2 -> S _ > 2 >
+A 1 3 -> S _ > 3 >
+
+A2 ( _ -> S _ > a >
+
+BACK _ a -> A 0 ^ _ <
+BACK _ 2 -> BACK _ ^ _ <
+BACK _ 3 -> BACKSPEC _ ^ _ <
+BACK _ o -> BACK _ ^ _ <
+BACK _ ( -> S _ > 2 >
+
+BACKSPEC _ 2 -> BACKSPEC _ ^ _ <
+BACKSPEC _ 3 -> BACKSPEC _ ^ _ <
+BACKSPEC _ o -> BACKSPEC _ ^ _ <
+BACKSPEC _ a -> A 1 ^ _ <
+BACKSPEC _ ( -> S _ > 3 >

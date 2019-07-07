@@ -1,0 +1,8 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+S e -> AC e ^
+S 0 -> N e >
+N 0 -> S e >
+N e -> RJ e >

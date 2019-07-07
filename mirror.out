@@ -1,0 +1,47 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S e -> AC e ^
+S 0 -> SP 0 >
+S 1 -> SP 1 >
+
+SP 0 -> SP 0 >
+SP 1 -> SP 1 >
+SP e -> TAKE e <
+
+TAKE 0 -> T0 2 >
+TAKE 1 -> T1 3 >
+TAKE 2 -> TAKE 2 <
+TAKE 3 -> TAKE 3 <
+TAKE e -> CHANGE e >
+
+T0 0 -> T0 0 >
+T0 1 -> T0 1 >
+T0 2 -> T0 2 >
+T0 3 -> T0 3 >
+T0 e -> SKIP 0 <
+
+
+T1 0 -> T1 0 >
+T1 1 -> T1 1 >
+T1 2 -> T1 2 >
+T1 3 -> T1 3 >
+T1 e -> SKIP 1 <
+
+
+SKIP 0 -> SKIP 0 <
+SKIP 1 -> SKIP 1 <
+SKIP 2 -> TAKE 2 <
+SKIP 3 -> TAKE 3 <
+
+CHANGE e -> DONE e <
+CHANGE 2 -> CHANGE 0 >
+CHANGE 3 -> CHANGE 1 >
+CHANGE 0 -> CHANGE 0 >
+CHANGE 1 -> CHANGE 1 >
+
+DONE 0 -> DONE 0 <
+DONE 1 -> DONE 1 <
+DONE e -> AC e >

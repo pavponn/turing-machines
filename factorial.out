@@ -1,0 +1,176 @@
+start: S0
+accept: AC
+reject: RJ
+blank: e
+
+S0 1 -> ST 1 <
+S0 0 -> ST 0 <
+ST e -> ONEFORMUL * <
+
+ONEFORMUL e -> S 1 ^
+
+S 1 -> S' 1 <
+S 0 -> S' 0 <
+S' e -> DELIM - <
+
+DELIM e -> TOLAST 0 >
+
+TOLAST - -> TOLAST - >
+TOLAST 0 -> TOLAST 0 >
+TOLAST 1 -> TOLAST 1 >
+TOLAST 2 -> TOLAST 0 >
+TOLAST 3 -> TOLAST 1 >
+TOLAST * -> TOLAST * >
+TOLAST z -> TOLAST z >
+TOLAST o -> TOLAST o >
+
+TOLAST 0' -> LAST 0' <
+TOLAST 1' -> LAST 1' <
+TOLAST e -> LAST e <
+
+LAST 0 -> GOSHIFT 0' <
+LAST 1 -> GOSUM 1' <
+LAST * -> CLEAN x <
+
+GOSHIFT 1 -> GOSHIFT 1 <
+GOSHIFT 0 -> GOSHIFT 0 <
+GOSHIFT * -> GOSHIFT * <
+GOSHIFT - -> SHIFT - <
+
+SHIFT z -> SHIFT z <
+SHIFT o -> SHIFT o <
+SHIFT 1 -> TOLAST o >
+SHIFT 0 -> TOLAST z >
+SHIFT e -> TOLAST z >
+
+GOSUM 0 -> GOSUM 0 <
+GOSUM 1 -> GOSUM 1 <
+GOSUM * -> SUM * <
+
+SUM 0 -> GOADD0 2 <
+SUM 1 -> GOADD1 3 <
+SUM - -> DSHIFT - <
+
+GOADD0 0 -> GOADD0 0 <
+GOADD0 1 -> GOADD0 1 <
+GOADD0 - -> ADD0 - <
+
+ADD0 2 -> ADD0 2 <
+ADD0 3 -> ADD0 3 <
+ADD0 z -> ADD0 z <
+ADD0 o -> ADD0 o <
+ADD0 0 -> RETSUM 2 >
+ADD0 1 -> RETSUM 3 >
+ADD0 e -> RETSUM 2 >
+
+RETSUM 0 -> RETSUM 0 >
+RETSUM 1 -> RETSUM 1 >
+RETSUM 2 -> RETSUM 2 >
+RETSUM 3 -> RETSUM 3 >
+RETSUM o -> RETSUM o >
+RETSUM z -> RETSUM z >
+RETSUM - -> TOSUM - >
+
+TOSUM 0 -> TOSUM 0 >
+TOSUM 1 -> TOSUM 1 >
+TOSUM 2 -> SUM 2 <
+TOSUM 3 -> SUM 3 <
+
+GOADD1 0 -> GOADD1 0 <
+GOADD1 1 -> GOADD1 1 <
+GOADD1 - -> ADD1 - <
+
+ADD1 z -> ADD1 z <
+ADD1 o -> ADD1 o <
+ADD1 2 -> ADD1 2 <
+ADD1 3 -> ADD1 3 <
+ADD1 0 -> RETSUM 3 >
+ADD1 e -> RETSUM 3 >
+ADD1 1 -> CARRY 2 <
+
+
+CARRY e -> RETSUM 1 >
+CARRY 0 -> RETSUM 1 >
+CARRY 1 -> CARRY 0 <
+
+DSHIFT o -> DSHIFT o <
+DSHIFT z -> DSHIFT z <
+DSHIFT 2 -> FRESH z <
+DSHIFT 3 -> FRESH o <
+
+FRESH 1 -> FRESH 1 <
+FRESH 0 -> FRESH 0 <
+FRESH 2 -> FRESH 0 <
+FRESH 3 -> FRESH 1 <
+FRESH e -> TOLAST e >
+
+CLEAN 1 -> CLEAN x <
+CLEAN 0 -> CLEAN x <
+CLEAN 2 -> CLEAN x <
+CLEAN 3 -> CLEAN x <
+CLEAN - -> SET x <
+
+
+SET o -> SET 1 <
+SET z -> SET 0 <
+SET 1 -> SET 1 <
+SET 0 -> SET 0 <
+SET 2 -> SET 0 <
+SET 3 -> SET 1 <
+
+SET e -> GOTO e >
+
+GOTO 1 -> GOTO 1 >
+GOTO 0 -> GOTO 0 >
+GOTO x -> GOTO x >
+
+GOTO 1' -> GOTO 1 >
+GOTO 0' -> GOTO 0 >
+GOTO e -> MINUS e <
+
+MINUS 1 -> FORM 0 <
+MINUS 0 -> TAKE 1 <
+
+TAKE 0 -> TAKE 1 <
+TAKE 1 -> FORM 0 <
+
+FORM 1 -> FORM 1 <
+FORM 0 -> FORM 0 <
+FORM x -> DEL x >
+
+DEL 0 -> DEL x >
+DEL 1 -> PUTMUL 1 <
+DEL e -> DONE e <
+
+
+PUTMUL x -> CAPT * <
+
+CAPT x -> CAPT x <
+CAPT 0 -> BRING0 x >
+CAPT 1 -> BRING1 x >
+CAPT e -> GOTOMULT e >
+
+GOTOMULT x -> GOTOMULT e >
+GOTOMULT 0 -> S 0 ^
+GOTOMULT 1 -> S 1 ^
+
+BRING0 x -> BRING0 x >
+BRING0 * -> PUT0 * <
+BRING0 1 -> PUT0 1 <
+BRING0 0 -> PUT0 0 <
+
+PUT0 x -> CAPT 0 <
+
+BRING1 x -> BRING1 x >
+BRING1 * -> PUT1 * <
+BRING1 1 -> PUT1 1 <
+BRING1 0 -> PUT1 0 <
+
+PUT1 x -> CAPT 1 <
+
+DONE x -> DONE e <
+DONE 1 -> DONE 1 <
+DONE 0 -> DONE 0 <
+DONE e -> AC e >
+
+

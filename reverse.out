@@ -1,0 +1,37 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S 0 -> SP 0 <
+S 1 -> SP 1 <
+S e -> AC e ^
+
+SP e -> GO * >
+
+GO 0 -> B0 * <
+GO 1 -> B1 * <
+GO e -> CLEAN e <
+GO * -> GO * >
+
+B0 0 -> B0 0 <
+B0 1 -> B0 1 <
+B0 * -> B0 * <
+B0 e -> SKIP 0 >
+
+B1 0 -> B1 0 <
+B1 1 -> B1 1 <
+B1 * -> B1 * <
+B1 e -> SKIP 1 >
+
+SKIP 0 -> SKIP 0 >
+SKIP 1 -> SKIP 1 >
+SKIP * -> GO * >
+
+CLEAN * -> CLEAN e <
+CLEAN 0 -> DONE 0 <
+CLEAN 1 -> DONE 1 <
+
+DONE 0 -> DONE 0 <
+DONE 1 -> DONE 1 <
+DONE e -> AC e >

@@ -1,0 +1,54 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S 0 -> GO 2 >
+S 1 -> GO 3 >
+S e -> AC e ^
+S 2 -> MOVELEFT 2 <
+S 3 -> MOVELEFT 3 <
+
+MOVELEFT 2 -> FIND2 * >
+MOVELEFT 3 -> FIND3 * >
+GO 0 -> GO 0 >
+GO 1 -> GO 1 >
+GO 2 -> CHANGE 2 <
+GO 3 -> CHANGE 3 <
+GO e -> CHANGE e <
+
+CHANGE 0 -> BACK 2 <
+CHANGE 1 -> BACK 3 <
+CHANGE 2 -> RJ 2 ^
+CHANGE 3 -> RJ 3 ^
+
+BACK 0 -> BACK 0 <
+BACK 1 -> BACK 1 <
+BACK 2 -> S 2 >
+BACK 3 -> S 3 >
+
+FIND2 2 -> FIND2 2 >
+FIND2 3 -> FIND2 3 >
+FIND2 * -> FIND2 * >
+FIND2 e -> CHECK2 e <
+
+CHECK2 2 -> BACKFIND e <
+CHECK2 3 -> RJ 3 ^
+
+FIND3 2 -> FIND3 2 >
+FIND3 3 -> FIND3 3 >
+FIND3 * -> FIND3 * >
+FIND3 e -> CHECK3 e <
+
+CHECK3 3 -> BACKFIND e <
+CHECK3 2 -> RJ 2 ^
+
+BACKFIND 2 -> BACKFIND 2 <
+BACKFIND 3 -> BACKFIND 3 <
+BACKFIND * -> SKIP * <
+
+SKIP * -> SKIP * <
+SKIP 2 -> FIND2 * >
+SKIP 3 -> FIND3 * >
+
+SKIP e -> AC e ^

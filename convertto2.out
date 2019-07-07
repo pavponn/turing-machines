@@ -1,0 +1,50 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S 0 -> S 0 <
+S 1 -> S 1 <
+S 2 -> S 2 <
+
+S e -> FORMNUM * <
+
+FORMNUM e -> TOEND 0 >
+
+TOEND * -> TOEND * >
+TOEND 0 -> TOEND 0 >
+TOEND 1 -> TOEND 1 >
+TOEND 2 -> TOEND 2 >
+TOEND e -> MINUS e <
+
+MINUS 1 -> ADD1 0 <
+MINUS 2 -> ADD1 1 <
+MINUS 0 -> TAKE 2 <
+
+TAKE 0 -> TAKE 2 <
+TAKE 1 -> ADD1 0 <
+TAKE 2 -> ADD1 1 <
+TAKE * -> TOCLEAN * >
+
+
+TOCLEAN 2 -> TOCLEAN 2 >
+TOCLEAN e -> CLEAN e <
+
+CLEAN 2 -> CLEAN e <
+CLEAN * -> TOSTART e <
+
+TOSTART 1 -> TOSTART 1 <
+TOSTART 0 -> TOSTART 0 <
+TOSTART e -> AC e >
+
+ADD1 0 -> ADD1 0 <
+ADD1 1 -> ADD1 1 <
+ADD1 2 -> ADD1 2 <
+ADD1 * -> ADD * <
+
+ADD 0 -> TOEND 1 >
+ADD 1 -> CARRY 0 <
+
+CARRY 0 -> TOEND 1 >
+CARRY 1 -> CARRY 0 <
+CARRY e -> TOEND 1 >

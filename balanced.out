@@ -1,0 +1,33 @@
+start: S
+accept: AC
+reject: RJ
+blank: e
+
+S e -> AC e ^
+S ) -> CLEAN e >
+S ( -> GO ( >
+
+GO ( -> GO ( >
+GO ) -> BACK * <
+GO * -> GO * >
+
+GO e -> CHECK e <
+
+BACK ( -> GO * >
+BACK * -> BACK * <
+
+CHECK * -> CHECK e <
+CHECK ( -> CLEANRJ e <
+CHECK ) -> CLEANRJ e <
+CHECK e -> AC e >
+
+CLEANRJ ( -> CLEANRJ e <
+CLEANRJ ) -> CLEANRJ e <
+CLEANRJ * -> CLEANRJ e <
+CLEANRJ e -> RJ e >
+
+
+CLEAN ( -> CLEAN e >
+CLEAN ) -> CLEAN e >
+CLEAN * -> CLEAN e >
+CLEAN e -> RJ e <
